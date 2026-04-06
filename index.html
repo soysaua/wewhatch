@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Auto Video Site</title>
+<title>My Video Site</title>
 <style>
 body {
   margin: 0;
@@ -44,7 +44,7 @@ h1 {
 
 <body>
 
-<h1>My Auto Video Site</h1>
+<h1>My Video Site</h1>
 
 <iframe id="player"></iframe>
 
@@ -56,24 +56,30 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/1oXbsg82A3mdyeegN2OAUE
 fetch(SHEET_URL)
   .then(res => res.text())
   .then(data => {
-    const rows = data.split("\n").slice(1);
+    const rows = data.trim().split("\n").slice(1);
     const grid = document.getElementById("grid");
 
     rows.forEach(row => {
       const cols = row.split(",");
 
-      const title = cols[0];
-      const url = cols[1];
+      const time = cols[0]?.trim();
+      const email = cols[1]?.trim();
+      const title = cols[2]?.trim();
+      let url = cols[3]?.trim();
 
       if (!title || !url) return;
 
+      // fix Google Drive links automatically
+      url = url.replace("/view", "/preview");
+
       const card = document.createElement("div");
       card.className = "card";
-      card.innerText = "▶ " + title;
+      card.innerHTML = "▶ " + title;
 
       card.onclick = () => {
-        document.getElementById("player").style.display = "block";
-        document.getElementById("player").src = url;
+        const player = document.getElementById("player");
+        player.style.display = "block";
+        player.src = url;
       };
 
       grid.appendChild(card);
